@@ -41,7 +41,7 @@ def main():
     # pl_name = "WASP-76 b"
     # BOUNDS_perfect = find_bounds(pl_name, 10)
 
-    BOUNDS = compute_bounds(time, flux, flux_err, max_per)
+    BOUNDS = compute_bounds(pg, flux, flux_err, max_per)
 
     # print("Perfet bounds :", BOUNDS_perfect)
     print("Computed bounds :", BOUNDS)
@@ -49,7 +49,7 @@ def main():
     nwalkers = 46
     steps = 500
 
-    x0 = np.array([time[np.argmin(flux)], max_per, np.sqrt(1 - np.min(flux)) - np.sqrt(np.mean(flux_err)), 2.8*max_per**(2/3), 89.0, 0.5, 0.5])
+    x0 = np.array([pg.transit_time_at_max_power.value, max_per, np.sqrt(1 - np.min(flux)) - np.sqrt(np.mean(flux_err)), 2.8*max_per**(2/3), 89.0, 0.5, 0.5])
     # x0_perfect = np.array([(b[0] + b[1]) / 2 for b in BOUNDS_perfect])
 
     # print("Perfect Initial :", x0_perfect)

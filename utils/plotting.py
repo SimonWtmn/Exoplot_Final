@@ -84,12 +84,12 @@ def model(time, flux, flux_err, time_fold, flux_fold, flux_fold_err, target_name
     axs[0][0].set_title("Fit on Raw Light Curve", fontsize=12)
 
     axs[0][1].errorbar(time_fold, flux_fold, yerr=flux_fold_err, linestyle="None", marker=".", ms=2, color="red", ecolor="orange", elinewidth=0.5, alpha=0.7, capsize=1.5)
-    axs[0][1].plot(time_fold, make_transit_model(time_fold, theta_max), color="navy", zorder=3)
+    axs[0][1].plot(time_fold, make_transit_model(time_fold/theta_max[1], theta_max), color="navy", zorder=3)
     axs[0][1].set_title("Fit on Folded Light Curve", fontsize=12)
 
     axs[1][0].errorbar(time_fold, flux_fold, yerr=flux_fold_err, linestyle="None", marker=".", ms=2, color="red", ecolor="orange", elinewidth=0.5, alpha=0.7, capsize=1.5)
     for theta in samples[np.random.randint(len(samples), size=100)]:
-            axs[1][0].plot(time_fold, make_transit_model(time_fold, theta), color="navy", alpha=0.1, zorder=3)
+            axs[1][0].plot(time_fold, make_transit_model(time_fold/theta_max[1], theta), color="navy", alpha=0.1, zorder=3)
     axs[1][0].set_title("Walkers' Tryouts", fontsize=12) 
 
     param_text = ""

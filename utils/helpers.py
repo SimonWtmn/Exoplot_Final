@@ -20,7 +20,7 @@ LABELS = ['$t_0 \\, \\left( JD \\right)$',
 # Finding Bounds
 # ===========================================================
 
-NEA = pd.read_csv(r"C:\Users\simon\OneDrive\Bureau\Exoplot_final\data\NEA.csv", comment="#")
+NEA = pd.read_csv(r".\data\NEA.csv", comment="#")
 
 
 def max_err(err1, err2):
@@ -77,11 +77,12 @@ def find_bounds(pl_name, scale_factor, df=NEA):
     return BOUNDS
 
 
-def compute_bounds(time, flux, flux_err, max_per):    
+def compute_bounds(pg, flux, flux_err, max_per):    
     BOUNDS = []
     
     # t0
-    BOUNDS.append((np.min(time), np.max(time)))
+    t0_est = pg.transit_time_at_max_power.value
+    BOUNDS.append((t0_est - 0.01, t0_est + 0.01))
     
     # P
     BOUNDS.append((max_per * 0.99, max_per * 1.01))
