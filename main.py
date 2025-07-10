@@ -38,33 +38,33 @@ def main():
     # Compute Bounds and Initial Guess
     # ===========================================================
 
-    pl_name = "WASP-76 b"
-    BOUNDS_perfect = find_bounds(pl_name, 10)
+    # pl_name = "WASP-76 b"
+    # BOUNDS_perfect = find_bounds(pl_name, 10)
 
-    BOUNDS = compute_bounds(flux, max_per)
+    BOUNDS = compute_bounds(time, flux, flux_err, max_per)
 
-    print("Perfet bounds :", BOUNDS_perfect)
+    # print("Perfet bounds :", BOUNDS_perfect)
     print("Computed bounds :", BOUNDS)
 
     nwalkers = 46
-    steps = 5000
+    steps = 500
 
-    x0 = np.array([0, max_per, np.sqrt(np.max(flux)-np.min(flux)), 3*max_per**(2/3), 89.0, 0.5, 0.5])
-    x0_perfect = np.array([(b[0] + b[1]) / 2 for b in BOUNDS_perfect])
+    x0 = np.array([time[np.argmin(flux)], max_per, np.sqrt(1 - np.min(flux)) - np.sqrt(np.mean(flux_err)), 2.8*max_per**(2/3), 89.0, 0.5, 0.5])
+    # x0_perfect = np.array([(b[0] + b[1]) / 2 for b in BOUNDS_perfect])
 
-    print("Perfect Initial :", x0_perfect)
+    # print("Perfect Initial :", x0_perfect)
     print("Computed Initial :", x0)
     # ===========================================================
     # Find Maximum a Posteriori Estimate
     # ===========================================================
 
-    res = minimize(neg_log_posterior, x0, args=(time, flux, flux_err, BOUNDS), method='POWELL')
+    res = minimize(neg_log_posterior, x0, args=(time, flux, flux_err, BOUNDS), method='L-BFGS-B')
     theta_map = res.x
 
-    res_perfect = minimize(neg_log_posterior, x0, args=(time, flux, flux_err, BOUNDS_perfect), method='POWELL')
-    theta_map_perfect = res_perfect.x
+    # res_perfect = minimize(neg_log_posterior, x0, args=(time, flux, flux_err, BOUNDS_perfect), method='POWELL')
+    # theta_map_perfect = res_perfect.x
 
-    print("Perfect Optimized Initial :", theta_map_perfect)
+    # print("Perfect Optimized Initial :", theta_map_perfect)
     print("Computed Optimized Initial :", theta_map)
 
     # ===========================================================
@@ -73,16 +73,12 @@ def main():
 
     ndim = len(theta_map)
 
-    spread = 0.02
+    spread = 0.005
     p0 = []
     for _ in range(nwalkers):
-        walker = theta_map + np.random.uniform(-spread, spread, ndim) * np.array(
-            [high - low for (low, high) in BOUNDS]
-        )
-        # clip to stay inside bounds
-        walker = np.clip(walker, [low for (low, _) in BOUNDS], [high for (_, high) in BOUNDS])
+        walker = theta_map + spread * np.random.randn(ndim)
+        walker = np.clip(walker, [b[0] for b in BOUNDS], [b[1] for b in BOUNDS])
         p0.append(walker)
-
     p0 = np.array(p0)
 
     data = (time, flux, flux_err, BOUNDS)
@@ -109,9 +105,7 @@ def main():
     # Fold Light Curve at Best-fit Epoch
     # ===========================================================
 
-    epoch_phase = (lc.time[0].value + (theta_max[0] * max_per)) % max_per
-
-    fold = lc.fold(period=max_per, epoch_phase=epoch_phase)
+    fold = lc.fold(period=max_per, epoch_time=theta_max[0])
 
     time_fold     = fold.time.value
     flux_fold     = fold.flux.value

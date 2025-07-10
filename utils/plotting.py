@@ -71,10 +71,8 @@ def periodogram(freq, per, power, max_freq, max_per, target_name):
 def model(time, flux, flux_err, time_fold, flux_fold, flux_fold_err, target_name, samples, flat_log_prob):
     theta_max = samples[np.argmax(flat_log_prob)]
 
-    phase_min, phase_max = theta_max[0]-0.2, theta_max[0]+0.2
-
+    phase_min, phase_max = -0.2, +0.2
     mask = (time_fold >= phase_min) & (time_fold <= phase_max)
-
     time_fold = time_fold[mask]
     flux_fold = flux_fold[mask]
     flux_fold_err = flux_fold_err[mask]
@@ -107,7 +105,7 @@ def model(time, flux, flux_err, time_fold, flux_fold, flux_fold_err, target_name
                 bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5))
 
 
-    for ax in axs[0::2].flatten():
+    for ax in axs.flatten():
         ax.grid(True, which="both", linestyle="--", linewidth=0.5, alpha=0.7)
         ax.tick_params(axis="both", which="major", labelsize=10)
         ax.set_xlabel("Time (JD)", fontsize=10)

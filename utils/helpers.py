@@ -77,24 +77,22 @@ def find_bounds(pl_name, scale_factor, df=NEA):
     return BOUNDS
 
 
-def compute_bounds(flux, max_per):    
+def compute_bounds(time, flux, flux_err, max_per):    
     BOUNDS = []
     
     # t0
-    BOUNDS.append((-0.3, 0.3))
+    BOUNDS.append((np.min(time), np.max(time)))
     
     # P
-    BOUNDS.append((max_per * 0.98, max_per * 1.02))
+    BOUNDS.append((max_per * 0.99, max_per * 1.01))
     
     # rp/rs
-    fmin, fmax = np.min(flux), np.max(flux)
-    delta = fmax - fmin
-    rp_rs_est = np.sqrt(delta)
+    rp_rs_est = np.sqrt(1 - np.min(flux)) - np.sqrt(np.mean(flux_err))
     x = 0.4 * rp_rs_est
     BOUNDS.append((max(rp_rs_est - x, 0.008), rp_rs_est + x))
     
     # a/rs
-    a_rs_est = 3 * max_per**(2/3)
+    a_rs_est = 2.8 * max_per**(2/3)
     y = 0.4 * a_rs_est
     BOUNDS.append((max(a_rs_est - y, 1.5), a_rs_est + y))
     

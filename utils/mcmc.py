@@ -80,7 +80,7 @@ def log_posterior(params, time, flux, flux_err, BOUNDS):
         return lp + ll
     except Exception as e:
         print(f"[log_posterior ERROR] params={params} -> {e}")
-        return -1e20
+        return -np.inf
 
 
 def neg_log_posterior(params, time, flux, flux_err, BOUNDS):
