@@ -13,7 +13,7 @@ def main():
     # Load Light Curve
     # ===========================================================
 
-    target_name = "WASP 141"
+    target_name = "WASP 76"
     search_result = lk.search_lightcurve(target=target_name)
     row = 0
     lc = search_result[row].download().normalize().remove_nans()
@@ -38,7 +38,7 @@ def main():
     # Compute Bounds and Initial Guess
     # ===========================================================
 
-    pl_name = "WASP-141 b"
+    pl_name = "WASP-76 b"
     BOUNDS_perfect = find_bounds(pl_name, 10)
 
     BOUNDS = compute_bounds(flux, max_per)
@@ -109,7 +109,9 @@ def main():
     # Fold Light Curve at Best-fit Epoch
     # ===========================================================
 
-    fold = lc.fold(period=max_per, epoch_time=theta_max[0])
+    epoch_phase = (lc.time[0].value + (theta_max[0] * max_per)) % max_per
+
+    fold = lc.fold(period=max_per, epoch_phase=epoch_phase)
 
     time_fold     = fold.time.value
     flux_fold     = fold.flux.value

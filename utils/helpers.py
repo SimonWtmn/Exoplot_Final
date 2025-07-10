@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 
 # ===========================================================
 # Labels
@@ -76,7 +76,6 @@ def find_bounds(pl_name, scale_factor, df=NEA):
 
     return BOUNDS
 
-import numpy as np
 
 def compute_bounds(flux, max_per):    
     BOUNDS = []
@@ -92,7 +91,7 @@ def compute_bounds(flux, max_per):
     delta = fmax - fmin
     rp_rs_est = np.sqrt(delta)
     x = 0.4 * rp_rs_est
-    BOUNDS.append((0.008, rp_rs_est + x))
+    BOUNDS.append((max(rp_rs_est - x, 0.008), rp_rs_est + x))
     
     # a/rs
     a_rs_est = 3 * max_per**(2/3)
@@ -100,7 +99,7 @@ def compute_bounds(flux, max_per):
     BOUNDS.append((max(a_rs_est - y, 1.5), a_rs_est + y))
     
     # inclination
-    BOUNDS.append((85, 95))
+    BOUNDS.append((87, 93))
     
     # u1
     BOUNDS.append((0.0, 1.0))
